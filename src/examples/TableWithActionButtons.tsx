@@ -4,7 +4,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { LucideHeart, LucideTrash } from 'lucide-react';
 
 type User = {
   id: string;
@@ -13,7 +14,7 @@ type User = {
   age: number;
 };
 
-const users: Array<User> = [
+const initialUsers: Array<User> = [
   {
     id: '1',
     name: 'John',
@@ -30,7 +31,9 @@ const users: Array<User> = [
 
 const columnHelper = createColumnHelper<User>();
 
-export const BasicTableExample: React.FC<{ className?: string }> = (props) => {
+export const TableWithActionButtons: React.FC = () => {
+  const [users, setUsers] = useState(initialUsers);
+
   const table = useReactTable({
     data: users,
     columns: [
@@ -45,15 +48,45 @@ export const BasicTableExample: React.FC<{ className?: string }> = (props) => {
       columnHelper.accessor('age', {
         cell: (props) => <div>{props.getValue()}</div>,
       }),
+
+      {
+        accessorKey: 'action',
+        cell: (props) => (
+          <button
+            className="w-fit h-fit"
+            onClick={() =>
+              setUsers((current) =>
+                current.filter((u) => u.id !== props.row.original.id),
+              )
+            }
+          >
+            <LucideTrash size="20" />
+          </button>
+        ),
+      },
+
+      {
+        accessorKey: 'favorite',
+        cell: (props) => (
+          <button
+            className="w-fit h-fit"
+            onClick={() =>
+              setUsers((current) =>
+                current.filter((u) => u.id !== props.row.original.id),
+              )
+            }
+          >
+            <LucideHeart size="20" />
+          </button>
+        ),
+      },
     ],
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
-    <div className={cn(props.className)}>
-      <h1 className="mb-2 font-bold font-mono">
-        Basic table
-      </h1>
+    <div>
+      <h1 className="mb-2 font-bold font-mono">With actions</h1>
 
       <table>
         <thead>
